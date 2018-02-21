@@ -10,6 +10,7 @@ from utils.app_utils import FPS, WebcamVideoStream
 from multiprocessing import Queue, Pool
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
+# from drone_movement import moveDrone
 
 CWD_PATH = os.getcwd()
 
@@ -52,18 +53,14 @@ def detect_objects(image_np, sess, detection_graph):
         if classes[0,i] == 1:
             num = i
             break
-    # for num in reversed(indices):
-    #     np.delete(classes, num, 1)
-    #     np.delete(boxes, num, 1)
-    #     np.delete(scores, num, 1)
-    print(boxes.shape[0])
+
     classes = classes[0,i:i+1]
     classes = np.reshape(classes, (1))
     boxes = boxes[0,i:i+1,:]
     scores = scores[0,i:i+1]
     scores = np.reshape(scores, (1))
-    print(boxes.shape)
-    # print(scores.shape)
+    print(boxes[0])
+    # moveDrone(boxes[0])
     num_detections = 1
 
     # Visualization of the results of a detection.
