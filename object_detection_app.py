@@ -20,7 +20,7 @@ PATH_TO_CKPT = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'frozen_in
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = os.path.join(CWD_PATH, 'object_detection', 'data', 'mscoco_label_map.pbtxt')
 
-NUM_CLASSES = 90
+NUM_CLASSES = 1
 
 # Loading label map
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
@@ -47,13 +47,31 @@ def detect_objects(image_np, sess, detection_graph):
     (boxes, scores, classes, num_detections) = sess.run(
         [boxes, scores, classes, num_detections],
         feed_dict={image_tensor: image_np_expanded})
+    num = None
+    for i in range(len(scores[0])):
+        if classes[0,i] == 1:
+            num = i
+            break
+    # for num in reversed(indices):
+    #     np.delete(classes, num, 1)
+    #     np.delete(boxes, num, 1)
+    #     np.delete(scores, num, 1)
+    print(boxes.shape[0])
+    classes = classes[0,i:i+1]
+    classes = np.reshape(classes, (1))
+    boxes = boxes[0,i:i+1,:]
+    scores = scores[0,i:i+1]
+    scores = np.reshape(scores, (1))
+    print(boxes.shape)
+    # print(scores.shape)
+    num_detections = 1
 
     # Visualization of the results of a detection.
     vis_util.visualize_boxes_and_labels_on_image_array(
         image_np,
-        np.squeeze(boxes),
-        np.squeeze(classes).astype(np.int32),
-        np.squeeze(scores),
+        boxes,
+        classes.astype(np.int32),
+        scores,
         category_index,
         use_normalized_coordinates=True,
         line_thickness=8)
