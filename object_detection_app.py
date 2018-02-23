@@ -243,7 +243,7 @@ def detect_objects(image_np, sess, detection_graph):
     #
     # print("Set groundspeed to 5m/s.")
     vehicle.groundspeed=5
-    goto(80, -50) #doesn't work in here
+    goto(ycenter*100, xcenter*100) #doesn't work in here
     #go()
     # moveDrone(boxes[0])
     num_detections = 1
