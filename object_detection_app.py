@@ -97,19 +97,23 @@ def goto(dNorth, dEast, gotoFunction=vehicle.simple_goto):
 
     The method reports the distance to target every two seconds.
     """
-    currentLocation = vehicle.location.global_relative_frame
+    currentLocation = d["v"].location.global_relative_frame
     targetLocation = get_location_metres(currentLocation, dNorth, dEast)
     targetDistance = get_distance_metres(currentLocation, targetLocation)
-    vehicle.simple_goto(targetLocation)
+    d["v"].simple_goto(targetLocation)
     print("location", currentLocation)
     print("location", targetLocation)
     #print "DEBUG: targetLocation: %s" % targetLocation
     #print "DEBUG: targetLocation: %s" % targetDistance
 
-    while vehicle.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
+    while d["v"].mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
         #print "DEBUG: mode: %s" % vehicle.mode.name
-        remainingDistance=get_distance_metres(vehicle.location.global_relative_frame, targetLocation)
+        remainingDistance=get_distance_metres(d["v"].location.global_relative_frame, targetLocation)
         print("Distance to target: ", remainingDistance)
+        d["v"].groundspeed += 1
+        d["s"] += " ."
+        print("test", d["s"])
+        print("spped", d["v"].groundspeed)
         if remainingDistance<=targetDistance*0.01: #Just below target, in case of undershoot.
             print("Reached target")
             break;
@@ -318,7 +322,8 @@ if __name__ == '__main__':
     input_q = Queue(maxsize=args.queue_size)
     output_q = Queue(maxsize=args.queue_size)
     vehicle.groundspeed=5
-    pool = Pool(args.num_workers, worker, (input_q, output_q))
+    print("HELLO??", vehicle.groundspeed)
+    pool = Pool(1, worker, (input_q, output_q))
     video_capture = WebcamVideoStream(src=args.video_source,
                                       width=args.width,
                                       height=args.height).start()
